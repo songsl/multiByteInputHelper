@@ -1,36 +1,12 @@
 angular.module('multiByteInputHelper', [])
-    .directive('multiByte', ['$interval', function ($interval) {
-        var element = null,
-            value = null,
-            timer = null;
-
+    .directive('multiByte', [function () {
         return {
-            require: 'ngModel',
-            scope: {
-                ngModel: '='
-            },
+            priority: 2,
             restrict: 'A',
-            link: function (scope, elem) {
-
-                //set
-                element = elem;
-                value = elem.val();
-
-                //attach events
-                element.focus(function () {
-                    timer = $interval(function () {
-                        if (value != element.val()) {
-                            value = element.val();
-                            scope.ngModel = value;
-                        }
-                    }, 50);
+            compile: function (element) {
+                element.on('compositionstart', function(e) {
+                    e.stopImmediatePropagation();
                 });
-
-                element.blur(function () {
-                    if (timer) $interval.cancel(timer);
-                    timer = null;
-                });
-
             }
         }
     }]);
